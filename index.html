@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具箱 | 我的效率工具集</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <div class="absolute top-0 left-0 w-full h-64 bg-gradient-to-br from-blue-600 to-indigo-500 -z-10"></div>
+
+    <div class="container mx-auto px-4 py-12">
+        <header class="text-center mb-16">
+            <h1 class="text-4xl font-bold text-white mb-4">我的效率工具導覽</h1>
+            <p class="text-blue-100 text-lg">整合個人專案與企業應用，助你提升工作效率。</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden transform hover:-translate-y-2">
+                <div class="p-8">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fa-solid fa-cloud text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">個人雲端工作日誌</h3>
+                    <p class="text-gray-500 leading-relaxed mb-6">輕量級的個人工作記錄與進度追蹤平台，隨時隨地管理你的任務。</p>
+                    <a href="https://daily-mu-vert.vercel.app" target="_blank" class="inline-flex items-center justify-center w-full px-5 py-3 font-semibold text-white bg-purple-600 rounded-xl hover:bg-purple-700 transition-colors">
+                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden transform hover:-translate-y-2">
+                <div class="p-8">
+                    <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fa-solid fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">MES報工分析平台</h3>
+                    <p class="text-gray-500 leading-relaxed mb-6">整合製造執行系統數據，提供直觀的報工分析，提升生產透明度。</p>
+                    <a href="https://mes-analysis.vercel.app" target="_blank" class="inline-flex items-center justify-center w-full px-5 py-3 font-semibold text-white bg-teal-600 rounded-xl hover:bg-teal-700 transition-colors">
+                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden transform hover:-translate-y-2">
+                <div class="p-8">
+                    <div class="w-12 h-12 bg-red-100 text-red-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fa-solid fa-stopwatch text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">MES人員工單生產時間分析</h3>
+                    <p class="text-gray-500 leading-relaxed mb-6">精準分析工單生產時間，優化人力配置與產線效率。</p>
+                    <a href="https://yotsuki0509.github.io/MES-ProdTime-Analysis/" target="_blank" class="inline-flex items-center justify-center w-full px-5 py-3 font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors">
+                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden transform hover:-translate-y-2">
+                <div class="p-8">
+                    <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-yellow-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fa-solid fa-lightbulb text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">提示詞工具 (開發中)</h3>
+                    <p class="text-gray-500 leading-relaxed mb-6">為 AI 生成內容提供靈感與結構，助你創造更精確、更富有創意的提示詞。</p>
+                    <a href="https://yotsuki0509.github.io/Prompt/" target="_blank" class="inline-flex items-center justify-center w-full px-5 py-3 font-semibold text-white bg-yellow-600 rounded-xl hover:bg-yellow-700 transition-colors">
+                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="mt-20 text-center text-gray-400 text-sm border-t border-gray-200 pt-8">
+            &copy; 2025 我的效率工具箱. 保持學習，持續創造。
+        </footer>
+    </div>
+
+</body>
+</html>
