@@ -3,109 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工具箱 | 我的效率工具集</title>
+    <title>工具箱 | 專業效率工具導覽</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
-        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; }
-        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        
+        :root {
+            --bg-deep: #0f172a;
+            --accent-blue: #3b82f6;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif; 
+            background-color: var(--bg-deep);
+            color: #f1f5f9;
+        }
+
+        .grid-bg {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            transform: translateY(-8px);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.15;
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="min-h-screen relative overflow-x-hidden grid-bg">
 
-    <!-- 背景裝飾 -->
-    <div class="absolute top-0 left-0 w-full h-80 bg-gradient-to-br from-indigo-700 via-blue-600 to-indigo-500 -z-10 shadow-lg"></div>
+    <!-- 背景動態裝飾點綴 -->
+    <div class="orb w-96 h-96 bg-blue-600 top-[-10%] left-[-10%]"></div>
+    <div class="orb w-80 h-80 bg-indigo-500 bottom-[10%] right-[-5%]"></div>
+    <div class="orb w-64 h-64 bg-purple-600 top-[20%] right-[10%]"></div>
 
-    <div class="container mx-auto px-4 py-16">
-        <!-- 頁首標題 -->
-        <header class="text-center mb-16">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">我的效率工具導覽</h1>
-            <div class="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-                <p class="text-blue-50 text-sm md:text-base font-medium">整合個人專案與企業應用，助你提升工作效率 <span class="mx-2">|</span> Crafted by 勝全</p>
+    <div class="container mx-auto px-6 py-20 relative">
+        <!-- 頁首標題區 -->
+        <header class="text-center mb-20">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gradient mb-6 tracking-tight">
+                小工具整合網址
+            </h1>
+            <div class="flex justify-center">
+                <div class="px-6 py-2 bg-slate-800/50 backdrop-blur-sm rounded-full border border-slate-700/50 shadow-inner">
+                    <p class="text-slate-300 text-sm md:text-base font-medium flex items-center">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
+                        整合數據分析工具，提升工作效率　　　- Crafted by 勝全
+                    </p>
+                </div>
             </div>
         </header>
 
         <!-- 工具卡片網格 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             
             <!-- 1. 個人雲端工作日誌 -->
-            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-2xl card-hover border border-gray-100 overflow-hidden transform hover:-translate-y-2">
-                <div class="p-8">
-                    <div class="w-14 h-14 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                        <i class="fa-solid fa-cloud text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">個人雲端工作日誌</h3>
-                    <p class="text-gray-500 leading-relaxed mb-8 h-20 overflow-hidden text-sm md:text-base">輕量級的個人工作記錄與進度追蹤平台，隨時隨地管理你的任務。</p>
-                    <a href="https://daily-mu-vert.vercel.app" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-purple-600 rounded-xl hover:bg-purple-700 transition-colors shadow-md hover:shadow-lg">
-                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
-                    </a>
+            <div class="glass-card group rounded-3xl p-8 flex flex-col h-full">
+                <div class="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-cloud text-2xl"></i>
                 </div>
+                <h3 class="text-xl font-bold text-white mb-3">個人雲端工作日誌</h3>
+                <p class="text-slate-400 leading-relaxed mb-8 flex-grow text-sm">輕量級的個人工作記錄與進度追蹤平台，提供直觀的界面隨時隨地管理日常任務與重要決策。</p>
+                <a href="https://daily-mu-vert.vercel.app" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl hover:opacity-90 transition-all shadow-lg hover:shadow-purple-500/20">
+                    啟動日誌系統 <i class="fa-solid fa-chevron-right ml-2 text-xs"></i>
+                </a>
             </div>
 
             <!-- 2. MES報工分析平台 -->
-            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-2xl card-hover border border-gray-100 overflow-hidden transform hover:-translate-y-2">
-                <div class="p-8">
-                    <div class="w-14 h-14 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-teal-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                        <i class="fa-solid fa-chart-line text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">MES報工分析平台</h3>
-                    <p class="text-gray-500 leading-relaxed mb-8 h-20 overflow-hidden text-sm md:text-base">整合製造執行系統數據，提供直觀的報工分析，提升生產透明度。</p>
-                    <a href="https://mes-analysis.vercel.app" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-teal-600 rounded-xl hover:bg-teal-700 transition-colors shadow-md hover:shadow-lg">
-                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
-                    </a>
+            <div class="glass-card group rounded-3xl p-8 flex flex-col h-full">
+                <div class="w-14 h-14 bg-teal-500/10 text-teal-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-chart-line text-2xl"></i>
                 </div>
+                <h3 class="text-xl font-bold text-white mb-3">MES 報工分析平台</h3>
+                <p class="text-slate-400 leading-relaxed mb-8 flex-grow text-sm">深度挖掘製造執行系統數據，將複雜的報工流程可視化，協助管理者實時掌握生產透明度與節奏。</p>
+                <a href="https://mes-analysis.vercel.app" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-gradient-to-r from-teal-600 to-emerald-600 rounded-xl hover:opacity-90 transition-all shadow-lg hover:shadow-teal-500/20">
+                    進入分析中心 <i class="fa-solid fa-chevron-right ml-2 text-xs"></i>
+                </a>
             </div>
 
             <!-- 3. MES人員工單生產時間分析 -->
-            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-2xl card-hover border border-gray-100 overflow-hidden transform hover:-translate-y-2">
-                <div class="p-8">
-                    <div class="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-red-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                        <i class="fa-solid fa-stopwatch text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">MES人員工單生產時間分析</h3>
-                    <p class="text-gray-500 leading-relaxed mb-8 h-20 overflow-hidden text-sm md:text-base">精準分析工單生產時間，優化人力配置與產線效率。</p>
-                    <a href="https://yotsuki0509.github.io/MES-ProdTime-Analysis/" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors shadow-md hover:shadow-lg">
-                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
-                    </a>
+            <div class="glass-card group rounded-3xl p-8 flex flex-col h-full">
+                <div class="w-14 h-14 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-stopwatch text-2xl"></i>
                 </div>
+                <h3 class="text-xl font-bold text-white mb-3">MES 人員產能分析</h3>
+                <p class="text-slate-400 leading-relaxed mb-8 flex-grow text-sm">精確解析個別工單在不同工段的生產耗時，量化人力資源價值，是優化排程與人力配置的核心工具。</p>
+                <a href="https://yotsuki0509.github.io/MES-ProdTime-Analysis/" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-gradient-to-r from-rose-600 to-orange-600 rounded-xl hover:opacity-90 transition-all shadow-lg hover:shadow-rose-500/20">
+                    開啟時效監測 <i class="fa-solid fa-chevron-right ml-2 text-xs"></i>
+                </a>
             </div>
 
-            <!-- 4. 新增：產能效率異常行為檢視工具 -->
-            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-2xl card-hover border border-gray-100 overflow-hidden transform hover:-translate-y-2">
-                <div class="p-8">
-                    <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                        <i class="fa-solid fa-magnifying-glass-chart text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">產能效率異常行為檢視工具</h3>
-                    <p class="text-gray-500 leading-relaxed mb-8 h-20 overflow-hidden text-sm md:text-base">協助識別異常操作與流程不一致行為，檢視是否有自行補報工情況，作為追蹤依據。</p>
-                    <a href="https://abnormal-efficiency.vercel.app/" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-orange-600 rounded-xl hover:bg-orange-700 transition-colors shadow-md hover:shadow-lg">
-                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
-                    </a>
+            <!-- 4. 產能效率異常行為檢視工具 -->
+            <div class="glass-card group rounded-3xl p-8 flex flex-col h-full">
+                <div class="w-14 h-14 bg-orange-500/10 text-orange-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-shield-halved text-2xl"></i>
                 </div>
+                <h3 class="text-xl font-bold text-white mb-3">產能異常檢視工具</h3>
+                <p class="text-slate-400 leading-relaxed mb-8 flex-grow text-sm">專用於識別潛在的自行補報工或流程不一致行為，透過演算法過濾異常數據，確保內部改善的正當性。</p>
+                <a href="https://abnormal-efficiency.vercel.app/" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-gradient-to-r from-orange-600 to-amber-600 rounded-xl hover:opacity-90 transition-all shadow-lg hover:shadow-orange-500/20">
+                    執行異常稽核 <i class="fa-solid fa-chevron-right ml-2 text-xs"></i>
+                </a>
             </div>
 
             <!-- 5. 提示詞工具 -->
-            <div class="group bg-white rounded-2xl shadow-sm hover:shadow-2xl card-hover border border-gray-100 overflow-hidden transform hover:-translate-y-2">
-                <div class="p-8">
-                    <div class="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-yellow-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                        <i class="fa-solid fa-lightbulb text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">提示詞工具 (修改中)</h3>
-                    <p class="text-gray-500 leading-relaxed mb-8 h-20 overflow-hidden text-sm md:text-base">為 AI 生成內容提供靈感與結構，助你創造更精確、更富有創意的提示詞。</p>
-                    <a href="https://yotsuki0509.github.io/Prompt/" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-yellow-600 rounded-xl hover:bg-yellow-700 transition-colors shadow-md hover:shadow-lg">
-                        前往使用 <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
-                    </a>
+            <div class="glass-card group rounded-3xl p-8 flex flex-col h-full">
+                <div class="w-14 h-14 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-brain text-2xl"></i>
                 </div>
+                <h3 class="text-xl font-bold text-white mb-3">AI 提示詞工程 (Beta)</h3>
+                <p class="text-slate-400 leading-relaxed mb-8 flex-grow text-sm">賦予 AI 靈魂的結構化工具，協助建立精準、具邏輯性的 Prompt，將 AI 轉化為真正的工作效能倍增器。</p>
+                <a href="https://yotsuki0509.github.io/Prompt/" target="_blank" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl hover:opacity-90 transition-all shadow-lg hover:shadow-blue-500/20">
+                    優化提示邏輯 <i class="fa-solid fa-chevron-right ml-2 text-xs"></i>
+                </a>
             </div>
 
         </div>
 
         <!-- 頁尾 -->
-        <footer class="mt-24 text-center">
+        <footer class="mt-32 text-center">
             <div class="flex flex-col items-center">
-                <div class="h-px w-24 bg-gradient-to-r from-transparent via-gray-300 to-transparent mb-8"></div>
-                <p class="text-gray-400 text-sm tracking-wide">&copy; 2025 我的效率工具箱. 保持學習，持續創造。</p>
+                <p class="text-slate-500 text-sm tracking-[0.2em] uppercase mb-4">Master Toolset Dashboard</p>
+                <div class="h-[1px] w-12 bg-slate-700 mb-6"></div>
+                <p class="text-slate-400 text-xs">© 2025 Powered by 勝全. 透過數據驅動卓越運營.</p>
             </div>
         </footer>
     </div>
