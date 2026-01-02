@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工具箱 | 專業效率工具導覽 (旗艦版)</title>
+    <title>工具箱 | 專業效率工具導覽 (完整旗艦版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -21,15 +21,13 @@
         .sidebar-enter-from, .sidebar-leave-to { transform: translateX(-100%); }
         .loader { border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top: 3px solid #3b82f6; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* 操作按鈕的樣式 */
-        .action-btn { @apply w-8 h-8 rounded-full flex items-center justify-center transition-colors; }
+        .action-btn { @apply w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-lg cursor-pointer; }
     </style>
 </head>
 <body class="min-h-screen relative overflow-x-hidden grid-bg">
     
     <div id="app" class="relative min-h-screen flex">
-        <!-- 背景 -->
+        <!-- 背景裝飾 -->
         <div class="orb w-96 h-96 bg-blue-600 top-[-10%] left-[-10%] fixed"></div>
         <div class="orb w-80 h-80 bg-indigo-500 bottom-[10%] right-[-5%] fixed"></div>
 
@@ -38,7 +36,7 @@
             <div v-if="isSidebarOpen" class="fixed left-0 top-0 h-full w-80 bg-slate-900/95 backdrop-blur-xl border-r border-slate-700 p-6 z-50 overflow-y-auto shadow-2xl flex flex-col">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold text-white">
-                        <span v-if="user">{{ isEditing ? '編輯卡片' : '管理後台' }}</span>
+                        <span v-if="user">{{ isEditing ? '編輯模式' : '管理後台' }}</span>
                         <span v-else>管理員登入</span>
                     </h2>
                     <button @click="closeSidebar" class="text-slate-400 hover:text-white">
@@ -46,85 +44,95 @@
                     </button>
                 </div>
 
-                <!-- 狀態 1: 未登入 -->
+                <!-- 1. 未登入狀態 -->
                 <div v-if="!user" class="space-y-4">
-                    <p class="text-sm text-slate-400 mb-4">請先登入以編輯網站內容。</p>
-                    <input v-model="loginForm.email" type="email" placeholder="Email" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
-                    <input v-model="loginForm.password" type="password" placeholder="Password" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                    <p class="text-sm text-slate-400 mb-4">請登入以管理內容、排序或匯出資料。</p>
+                    <input v-model="loginForm.email" type="email" placeholder="Email" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-blue-500 outline-none">
+                    <input v-model="loginForm.password" type="password" placeholder="Password" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-blue-500 outline-none">
                     <p v-if="loginError" class="text-red-400 text-xs">{{ loginError }}</p>
                     <button @click="handleLogin" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg transition-colors flex justify-center items-center">
                         <span v-if="isLoading" class="loader mr-2"></span> 登入
                     </button>
                 </div>
 
-                <!-- 狀態 2: 已登入 (新增/編輯模式) -->
+                <!-- 2. 已登入狀態 -->
                 <div v-else class="space-y-4 flex-1">
-                    <div class="bg-blue-900/30 p-3 rounded-lg border border-blue-500/30 mb-4 flex justify-between items-center">
+                    <!-- 使用者資訊 -->
+                    <div class="bg-blue-900/20 p-3 rounded-lg border border-blue-500/20 mb-4 flex justify-between items-center">
                         <p class="text-xs text-blue-200 truncate max-w-[150px]">{{ user.email }}</p>
                         <button @click="handleLogout" class="text-xs text-blue-300 hover:text-white underline">登出</button>
                     </div>
 
-                    <!-- 提示文字 -->
-                    <div v-if="isEditing" class="bg-yellow-500/10 border border-yellow-500/30 p-2 rounded text-xs text-yellow-200 mb-2 flex justify-between items-center">
-                        <span>正在編輯模式</span>
+                    <!-- 編輯狀態提示 -->
+                    <div v-if="isEditing" class="bg-amber-500/10 border border-amber-500/30 p-2 rounded text-xs text-amber-200 mb-2 flex justify-between items-center">
+                        <span><i class="fa-solid fa-pen mr-1"></i> 正在編輯卡片</span>
                         <button @click="cancelEdit" class="text-white hover:underline">取消</button>
                     </div>
 
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">標題</label>
-                        <input v-model="formCard.title" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">描述</label>
-                        <textarea v-model="formCard.desc" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-blue-500"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">連結 URL</label>
-                        <input v-model="formCard.link" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">圖示 (FontAwesome)</label>
-                        <input v-model="formCard.icon" type="text" placeholder="fa-solid fa-rocket" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">主題色系</label>
-                        <select v-model="formCard.color" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-blue-500">
-                            <option value="purple">紫色</option>
-                            <option value="teal">青色</option>
-                            <option value="rose">玫瑰紅</option>
-                            <option value="orange">橘色</option>
-                            <option value="blue">藍色</option>
-                        </select>
+                    <!-- 表單區域 -->
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs text-slate-500 uppercase font-bold">標題</label>
+                            <input v-model="formCard.title" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500 uppercase font-bold">描述</label>
+                            <textarea v-model="formCard.desc" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500 uppercase font-bold">連結 URL</label>
+                            <input v-model="formCard.link" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500 uppercase font-bold">圖示 (FontAwesome)</label>
+                            <input v-model="formCard.icon" type="text" placeholder="fa-solid fa-rocket" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500 uppercase font-bold">顏色主題</label>
+                            <select v-model="formCard.color" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none">
+                                <option value="purple">霓虹紫 (Purple)</option>
+                                <option value="teal">科技青 (Teal)</option>
+                                <option value="rose">熱情紅 (Rose)</option>
+                                <option value="orange">活力橘 (Orange)</option>
+                                <option value="blue">深邃藍 (Blue)</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <!-- 按鈕區：根據是否編輯改變 -->
-                    <button v-if="isEditing" @click="updateCard" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 rounded-xl mt-4 transition-colors flex justify-center">
+                    <!-- 操作按鈕 -->
+                    <button v-if="isEditing" @click="updateCard" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl mt-4 transition-colors flex justify-center items-center shadow-lg shadow-amber-500/20">
                         <span v-if="isSaving" class="loader"></span>
-                        <span v-else><i class="fa-solid fa-pen mr-2"></i> 更新儲存</span>
+                        <span v-else><i class="fa-solid fa-check mr-2"></i> 完成更新</span>
                     </button>
 
-                    <button v-else @click="addCard" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl mt-4 transition-colors flex justify-center">
+                    <button v-else @click="addCard" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl mt-4 transition-colors flex justify-center items-center shadow-lg shadow-emerald-500/20">
                         <span v-if="isSaving" class="loader"></span>
                         <span v-else><i class="fa-solid fa-plus mr-2"></i> 新增卡片</span>
                     </button>
 
-                    <!-- 匯出功能區 -->
-                    <div class="mt-8 border-t border-slate-700 pt-6">
-                        <p class="text-xs text-slate-500 mb-3 uppercase tracking-wider">資料管理</p>
+                    <!-- 進階功能區 -->
+                    <div class="mt-8 border-t border-slate-700 pt-6 space-y-3">
+                        <p class="text-xs text-slate-500 uppercase tracking-wider mb-2">資料維護</p>
+                        
                         <button @click="exportData" class="w-full border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white py-2 rounded-lg text-sm transition-colors flex items-center justify-center">
-                            <i class="fa-solid fa-download mr-2"></i> 匯出備份 JSON
+                            <i class="fa-solid fa-file-export mr-2"></i> 匯出備份 (JSON)
+                        </button>
+
+                        <!-- ★★★ 資料修復按鈕 (專門用來救回舊資料) ★★★ -->
+                        <button @click="fixDataOrder" class="w-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 py-2 rounded-lg text-xs transition-colors flex items-center justify-center border border-dashed border-slate-600">
+                            <i class="fa-solid fa-wrench mr-2"></i> 重建排序索引 (修復用)
                         </button>
                     </div>
                 </div>
             </div>
         </transition>
 
-        <!-- 側邊欄開關按鈕 -->
-        <button @click="isSidebarOpen = !isSidebarOpen" class="fixed left-6 bottom-6 z-40 bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110">
+        <!-- 側邊欄開關 (齒輪) -->
+        <button @click="isSidebarOpen = !isSidebarOpen" class="fixed left-6 bottom-6 z-40 bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 border border-blue-400/50">
             <i class="fa-solid fa-gear"></i>
         </button>
 
-        <!-- 主內容區 -->
+        <!-- 主要內容區 -->
         <div class="flex-1 transition-all duration-300" :class="{'ml-0 md:ml-80': isSidebarOpen}">
             <div class="container mx-auto px-6 py-20 relative">
                 <header class="text-center mb-20">
@@ -141,35 +149,34 @@
 
                 <div v-if="loadingData" class="text-center text-slate-500 py-20">
                     <div class="loader mx-auto mb-4"></div>
-                    載入資料庫中...
+                    正在同步雲端資料...
                 </div>
 
+                <!-- 卡片列表 (使用 computed 排序後的資料) -->
                 <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                    <!-- 卡片迴圈 -->
-                    <div v-for="(card, index) in cards" :key="card.id" class="glass-card group rounded-3xl p-8 flex flex-col h-full relative">
+                    <div v-for="(card, index) in sortedCards" :key="card.id" class="glass-card group rounded-3xl p-8 flex flex-col h-full relative">
                         
-                        <!-- 管理介面 (僅登入顯示) -->
-                        <div v-if="user" class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                            <!-- 編輯按鈕 -->
-                            <button @click="startEdit(card)" class="action-btn bg-slate-700/50 text-yellow-400 hover:bg-slate-700" title="編輯">
+                        <!-- 編輯與刪除 (右上角) -->
+                        <div v-if="user" class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                            <button @click="startEdit(card)" class="action-btn bg-slate-800 text-amber-400 hover:bg-amber-500 hover:text-white" title="編輯">
                                 <i class="fa-solid fa-pen text-xs"></i>
                             </button>
-                            <!-- 刪除按鈕 -->
-                            <button @click="removeCard(card.id)" class="action-btn bg-slate-700/50 text-red-400 hover:bg-slate-700" title="刪除">
+                            <button @click="removeCard(card.id)" class="action-btn bg-slate-800 text-red-400 hover:bg-red-500 hover:text-white" title="刪除">
                                 <i class="fa-solid fa-trash text-xs"></i>
                             </button>
                         </div>
                         
                         <!-- 排序按鈕 (左下角) -->
-                        <div v-if="user" class="absolute bottom-4 left-4 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                            <button v-if="index > 0" @click="moveCard(index, -1)" class="action-btn bg-slate-800 text-slate-300 hover:bg-blue-600 hover:text-white" title="向前移">
+                        <div v-if="user" class="absolute bottom-4 left-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                            <button v-if="index > 0" @click="moveCard(index, -1)" class="action-btn bg-slate-800 text-slate-300 hover:bg-blue-500 hover:text-white" title="向前移">
                                 <i class="fa-solid fa-chevron-left text-xs"></i>
                             </button>
-                            <button v-if="index < cards.length - 1" @click="moveCard(index, 1)" class="action-btn bg-slate-800 text-slate-300 hover:bg-blue-600 hover:text-white" title="向後移">
+                            <button v-if="index < sortedCards.length - 1" @click="moveCard(index, 1)" class="action-btn bg-slate-800 text-slate-300 hover:bg-blue-500 hover:text-white" title="向後移">
                                 <i class="fa-solid fa-chevron-right text-xs"></i>
                             </button>
                         </div>
 
+                        <!-- 內容 -->
                         <div :class="`w-14 h-14 bg-${card.color}-500/10 text-${card.color}-400`" class="rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <i :class="`${card.icon} text-2xl`"></i>
                         </div>
@@ -179,16 +186,22 @@
                             前往工具 <i class="fa-solid fa-chevron-right ml-2 text-xs"></i>
                         </a>
                     </div>
+                    
+                    <!-- 無資料提示 -->
+                    <div v-if="sortedCards.length === 0" class="col-span-full text-center py-12 text-slate-600">
+                        <i class="fa-solid fa-ghost text-4xl mb-4 opacity-50"></i>
+                        <p>暫無資料，請登入後新增。</p>
+                    </div>
                 </div>
                 
-                <footer class="mt-32 text-center text-slate-500 text-sm">
-                    <p>© 2025 Powered by 勝全. Data from Firebase Cloud.</p>
+                <footer class="mt-32 text-center text-slate-500 text-xs tracking-wider uppercase">
+                    <p>© 2025 Powered by 勝全 · Cloud Sync Active</p>
                 </footer>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDKs 與 Vue 邏輯 -->
+    <!-- 邏輯層 -->
     <script type="module">
         import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
@@ -196,7 +209,7 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
         // -----------------------------------------------------------
-        // TODO: 請確認這裡已經替換成您的設定碼
+        // ★★★ 請務必替換成您的 Firebase Config ★★★
         const firebaseConfig = {
             apiKey: "AIzaSyBxI-_W03mMepHGNSpUzB-ojEMfnOHfJTI",
             authDomain: "my-tool-dashboard.firebaseapp.com",
@@ -216,17 +229,31 @@
             data() {
                 return {
                     isSidebarOpen: false,
-                    isEditing: false, // 是否處於編輯模式
-                    editingId: null, // 正在編輯的卡片 ID
-                    cards: [],
+                    isEditing: false,
+                    editingId: null,
+                    rawCards: [], // 原始資料
                     user: null,
                     loadingData: true,
                     isLoading: false,
                     isSaving: false,
                     loginForm: { email: '', password: '' },
                     loginError: '',
-                    // 表單資料 (新增和編輯共用)
                     formCard: { title: '', desc: '', link: '', icon: 'fa-solid fa-cube', color: 'blue' }
+                }
+            },
+            computed: {
+                // 前端排序邏輯：優先使用 order 排序，沒有 order 的話使用建立時間
+                sortedCards() {
+                    return [...this.rawCards].sort((a, b) => {
+                        // 如果兩者都有 order，比大小
+                        if (a.order !== undefined && b.order !== undefined) {
+                            return a.order - b.order;
+                        }
+                        // 如果沒有 order，依照建立時間 (新的在後，方便新增)
+                        const timeA = a.createdAt?.seconds || 0;
+                        const timeB = b.createdAt?.seconds || 0;
+                        return timeA - timeB;
+                    });
                 }
             },
             methods: {
@@ -236,16 +263,17 @@
                 },
                 closeSidebar() {
                     this.isSidebarOpen = false;
-                    this.cancelEdit(); // 關閉時重置編輯狀態
+                    this.cancelEdit();
                 },
+                // --- 登入系統 ---
                 async handleLogin() {
                     this.isLoading = true;
                     this.loginError = '';
                     try {
                         await signInWithEmailAndPassword(auth, this.loginForm.email, this.loginForm.password);
-                        this.loginForm.password = ''; 
+                        this.loginForm.password = '';
                     } catch (error) {
-                        this.loginError = "登入失敗";
+                        this.loginError = "登入失敗，請檢查帳號密碼";
                     } finally {
                         this.isLoading = false;
                     }
@@ -254,18 +282,18 @@
                     signOut(auth);
                     this.closeSidebar();
                 },
-                
-                // --- 新增功能 ---
+
+                // --- 新增卡片 ---
                 async addCard() {
-                    if(!this.formCard.title || !this.formCard.link) return alert('請輸入標題和連結');
+                    if(!this.formCard.title || !this.formCard.link) return alert('請填寫標題與連結');
                     this.isSaving = true;
                     try {
-                        // 自動給一個排序 index (目前的數量 + 1)
-                        const newOrder = this.cards.length > 0 ? this.cards.length : 0;
+                        // 找出目前最大的 order，加 1
+                        const maxOrder = this.rawCards.reduce((max, c) => Math.max(max, c.order || 0), 0);
                         
                         await addDoc(collection(db, "tools"), {
                             ...this.formCard,
-                            order: newOrder, 
+                            order: maxOrder + 1,
                             createdAt: new Date()
                         });
                         this.resetForm();
@@ -277,15 +305,14 @@
                     }
                 },
 
-                // --- 編輯功能 ---
+                // --- 編輯卡片 ---
                 startEdit(card) {
                     this.isSidebarOpen = true;
                     this.isEditing = true;
                     this.editingId = card.id;
-                    // 複製資料到表單 (避免直接修改原物件)
                     this.formCard = { ...card };
-                    // 移除不需要顯示在表單的欄位 (如果有 id 或 order 混進來)
-                    delete this.formCard.id;
+                    delete this.formCard.id; // 不存 ID 到欄位
+                    delete this.formCard.order; // 不在編輯表單改順序
                     delete this.formCard.createdAt;
                 },
                 cancelEdit() {
@@ -297,10 +324,10 @@
                     if(!this.editingId) return;
                     this.isSaving = true;
                     try {
-                        const cardRef = doc(db, "tools", this.editingId);
-                        await updateDoc(cardRef, this.formCard);
+                        const ref = doc(db, "tools", this.editingId);
+                        await updateDoc(ref, this.formCard);
                         alert("更新成功！");
-                        this.cancelEdit(); // 回到新增模式
+                        this.cancelEdit();
                     } catch(e) {
                         alert("更新失敗: " + e.message);
                     } finally {
@@ -308,9 +335,9 @@
                     }
                 },
 
-                // --- 刪除功能 ---
+                // --- 刪除卡片 ---
                 async removeCard(id) {
-                    if(confirm('確定要永久刪除嗎？')) {
+                    if(confirm('確定要永久刪除此工具卡片嗎？')) {
                         try {
                             await deleteDoc(doc(db, "tools", id));
                         } catch (e) {
@@ -319,56 +346,66 @@
                     }
                 },
 
-                // --- 排序功能 (交換順序) ---
+                // --- 排序移動 ---
                 async moveCard(index, direction) {
-                    // direction: -1 (往前/往左), 1 (往後/往右)
+                    const sorted = this.sortedCards;
                     const targetIndex = index + direction;
-                    if (targetIndex < 0 || targetIndex >= this.cards.length) return;
-
-                    const currentCard = this.cards[index];
-                    const targetCard = this.cards[targetIndex];
-
-                    // 在 Firestore 使用 Batch 批次寫入，確保兩個同時更新
-                    const batch = writeBatch(db);
                     
+                    if (targetIndex < 0 || targetIndex >= sorted.length) return;
+
+                    const currentCard = sorted[index];
+                    const targetCard = sorted[targetIndex];
+
+                    const batch = writeBatch(db);
                     const currentRef = doc(db, "tools", currentCard.id);
                     const targetRef = doc(db, "tools", targetCard.id);
 
-                    // 交換彼此的 order 值
-                    // 如果原本資料庫沒有 order 欄位，用 index 補上
+                    // 確保兩者都有 order 值 (如果沒有，用當前索引當作值)
                     const order1 = currentCard.order !== undefined ? currentCard.order : index;
                     const order2 = targetCard.order !== undefined ? targetCard.order : targetIndex;
 
-                    // 這裡強制交換數值
+                    // 交換數值
                     batch.update(currentRef, { order: order2 });
                     batch.update(targetRef, { order: order1 });
 
                     try {
                         await batch.commit();
                     } catch(e) {
-                        console.error("排序失敗", e);
-                        alert("排序更新失敗");
+                        alert("排序失敗，建議先點選側邊欄的「重建排序索引」");
                     }
                 },
 
-                // --- 匯出功能 ---
+                // --- 匯出資料 ---
                 exportData() {
-                    if(this.cards.length === 0) return alert("目前沒有資料可匯出");
-                    
-                    // 整理要匯出的資料 (去掉 id 等系統欄位)
-                    const dataToExport = this.cards.map(({id, ...rest}) => rest);
-                    const dataStr = JSON.stringify(dataToExport, null, 2);
-                    
-                    // 建立下載連結
+                    if(this.rawCards.length === 0) return alert("無資料可匯出");
+                    const dataStr = JSON.stringify(this.rawCards.map(({id, ...r})=>r), null, 2);
                     const blob = new Blob([dataStr], {type: "application/json"});
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `tools_backup_${new Date().toISOString().slice(0,10)}.json`;
-                    document.body.appendChild(a);
+                    a.download = `backup_${new Date().toISOString().split('T')[0]}.json`;
                     a.click();
-                    document.body.removeChild(a);
                     URL.revokeObjectURL(url);
+                },
+
+                // --- ★★★ 資料庫修復功能 ★★★ ---
+                async fixDataOrder() {
+                    if(!confirm("這將會幫所有舊資料自動加上排序編號，確定執行？")) return;
+                    this.isLoading = true;
+                    try {
+                        const batch = writeBatch(db);
+                        // 使用目前的顯示順序來當作基準
+                        this.sortedCards.forEach((card, idx) => {
+                            const ref = doc(db, "tools", card.id);
+                            batch.update(ref, { order: idx });
+                        });
+                        await batch.commit();
+                        alert("修復完成！現在您的資料庫結構已完整。");
+                    } catch(e) {
+                        alert("修復失敗: " + e.message);
+                    } finally {
+                        this.isLoading = false;
+                    }
                 },
 
                 resetForm() {
@@ -378,10 +415,10 @@
             mounted() {
                 onAuthStateChanged(auth, (user) => { this.user = user; });
 
-                // 讀取資料，並依照 order 排序
-                const q = query(collection(db, "tools"), orderBy("order", "asc"));
+                // ★★★ 關鍵修改：不使用 orderBy，一次抓取所有資料，避免舊資料消失 ★★★
+                const q = query(collection(db, "tools"));
                 onSnapshot(q, (snapshot) => {
-                    this.cards = snapshot.docs.map(doc => ({
+                    this.rawCards = snapshot.docs.map(doc => ({
                         id: doc.id,
                         ...doc.data()
                     }));
