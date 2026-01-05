@@ -25,8 +25,6 @@
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        
-        /* 彈窗動畫 */
         .modal-enter-active, .modal-leave-active { transition: opacity 0.3s ease; }
         .modal-enter-from, .modal-leave-to { opacity: 0; }
     </style>
@@ -53,7 +51,6 @@
 
                 <!-- 1. 未登入狀態 -->
                 <div v-if="!user" class="space-y-4">
-                    <p class="text-sm text-slate-400 mb-4">請登入以管理內容。</p>
                     <input v-model="loginForm.email" type="email" placeholder="Email" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none">
                     <input v-model="loginForm.password" type="password" placeholder="Password" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none">
                     <button @click="handleLogin" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg transition-colors flex justify-center items-center">
@@ -68,84 +65,79 @@
                         <button @click="handleLogout" class="text-blue-300 underline">登出</button>
                     </div>
 
-                    <div v-if="isEditing" class="bg-amber-500/10 border border-amber-500/30 p-2 rounded text-xs text-amber-200 mb-2 flex justify-between items-center">
-                        <span><i class="fa-solid fa-pen mr-1"></i> 正在編輯中</span>
-                        <button @click="cancelEdit" class="text-white hover:underline">取消</button>
-                    </div>
-
-                    <!-- 表單內容 -->
+                    <!-- 工具表單 -->
                     <div class="space-y-3">
-                        <div>
-                            <label class="text-xs text-slate-500 uppercase font-bold">標題</label>
-                            <input v-model="formCard.title" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500 uppercase font-bold">描述</label>
-                            <textarea v-model="formCard.desc" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none"></textarea>
-                        </div>
+                        <label class="text-xs text-slate-500 uppercase font-bold">工具卡片管理</label>
+                        <input v-model="formCard.title" type="text" placeholder="標題" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
+                        <textarea v-model="formCard.desc" rows="2" placeholder="描述內容" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none"></textarea>
                         
-                        <!-- 備註編輯區 (僅編輯模式) -->
-                        <div v-if="isEditing" class="border-t border-slate-700 pt-3 mt-3">
-                            <label class="text-xs text-amber-500 uppercase font-bold flex items-center mb-2">
-                                <i class="fa-solid fa-comment-dots mr-1"></i> 改版紀錄管理
-                            </label>
-                            <div class="flex gap-2 mb-3">
-                                <input v-model="newRemarkText" type="text" placeholder="新增紀錄內容..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white outline-none">
-                                <button @click="addRemark" class="bg-amber-600 px-3 rounded-lg text-xs font-bold text-white">新增</button>
+                        <!-- 針對單個工具的備註 (舊功能保留) -->
+                        <div v-if="isEditing" class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <label class="text-[10px] text-amber-500 font-bold uppercase block mb-2">單項改版紀錄</label>
+                            <div class="flex gap-2 mb-2">
+                                <input v-model="newRemarkText" type="text" placeholder="輸入備註..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white outline-none">
+                                <button @click="addRemark" class="bg-amber-600 px-2 rounded-lg text-[10px] text-white">新增</button>
                             </div>
-                            <div class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
-                                <div v-for="(rem, rIdx) in formCard.remarks" :key="rIdx" class="bg-slate-800/40 p-2 rounded border border-slate-700 group relative">
-                                    <p class="text-[11px] text-slate-300 pr-5">{{ rem.content }}</p>
-                                    <p class="text-[9px] text-slate-500 mt-1">{{ rem.time }}</p>
-                                    <button @click="removeRemark(rIdx)" class="absolute top-1 right-1 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
+                            <div class="max-h-24 overflow-y-auto custom-scrollbar space-y-1">
+                                <div v-for="(rem, rIdx) in formCard.remarks" :key="rIdx" class="text-[10px] bg-slate-900 p-1.5 rounded flex justify-between items-start">
+                                    <span class="text-slate-300 pr-2">{{ rem.content }}</span>
+                                    <button @click="removeRemark(rIdx)" class="text-slate-500 hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="text-xs text-slate-500 uppercase font-bold">連結 URL</label>
-                            <input v-model="formCard.link" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
-                        </div>
+                        <input v-model="formCard.link" type="text" placeholder="連結 URL" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
                         <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs text-slate-500 uppercase font-bold">圖示</label>
-                                <input v-model="formCard.icon" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-500 uppercase font-bold">顏色</label>
-                                <select v-model="formCard.color" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
-                                    <option value="purple">紫</option><option value="teal">青</option><option value="rose">紅</option><option value="orange">橘</option><option value="blue">藍</option>
-                                </select>
+                            <input v-model="formCard.icon" type="text" placeholder="fa-solid fa-cube" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none">
+                            <select v-model="formCard.color" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none">
+                                <option value="purple">紫</option><option value="teal">青</option><option value="rose">紅</option><option value="orange">橘</option><option value="blue">藍</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button v-if="isEditing" @click="updateCard" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-lg">更新卡片</button>
+                    <button v-else @click="addCard" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-lg">新增卡片</button>
+
+                    <!-- ★ 全站改版日誌管理區塊 ★ -->
+                    <div class="mt-8 pt-6 border-t border-slate-700 space-y-3">
+                        <label class="text-xs text-blue-400 uppercase font-bold flex items-center">
+                            <i class="fa-solid fa-bullhorn mr-2"></i> 系統改版日誌管理
+                        </label>
+                        <div class="flex gap-2">
+                            <input v-model="newSiteLogContent" type="text" placeholder="系統更新內容..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-blue-500">
+                            <button @click="addSiteLog" class="bg-blue-600 hover:bg-blue-500 text-white px-3 rounded-lg text-xs"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div class="max-h-40 overflow-y-auto custom-scrollbar space-y-2">
+                            <div v-for="log in siteLogs" :key="log.id" class="bg-slate-800/40 p-2 rounded border border-slate-700 group relative">
+                                <p class="text-[10px] text-blue-400 font-bold">{{ log.time }}</p>
+                                <p class="text-[11px] text-slate-300 pr-4">{{ log.content }}</p>
+                                <button @click="removeSiteLog(log.id)" class="absolute top-2 right-2 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <button v-if="isEditing" @click="updateCard" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl mt-4 flex justify-center items-center shadow-lg">
-                        <span v-if="isSaving" class="loader"></span><span v-else>更新資料</span>
-                    </button>
-                    <button v-else @click="addCard" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl mt-4 flex justify-center items-center shadow-lg">
-                        <span v-if="isSaving" class="loader"></span><span v-else>新增卡片</span>
-                    </button>
-
-                    <!-- 工具按鈕 -->
-                    <div class="mt-8 border-t border-slate-700 pt-6 space-y-3">
-                        <button @click="exportData" class="w-full border border-slate-600 text-slate-300 py-2 rounded-lg text-sm transition-colors flex items-center justify-center">
-                            <i class="fa-solid fa-file-export mr-2"></i> 匯出 JSON
-                        </button>
-                        <button @click="fixDataOrder" class="w-full bg-slate-800 text-slate-400 py-2 rounded-lg text-xs border border-dashed border-slate-600">
-                            <i class="fa-solid fa-wrench mr-2"></i> 重建排序 (修復用)
+                    <div class="pt-6 border-t border-slate-700 space-y-2">
+                        <button @click="exportData" class="w-full border border-slate-600 text-slate-300 py-2 rounded-lg text-xs flex items-center justify-center">
+                            <i class="fa-solid fa-file-export mr-2"></i> 匯出備份
                         </button>
                     </div>
                 </div>
             </div>
         </transition>
 
-        <!-- 側邊欄開關 -->
-        <button @click="isSidebarOpen = !isSidebarOpen" class="fixed left-6 bottom-6 z-40 bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-blue-400/50">
-            <i class="fa-solid fa-gear"></i>
-        </button>
+        <!-- 右下角懸浮按鈕組 -->
+        <div class="fixed left-6 bottom-6 z-40 flex flex-col gap-3">
+            <!-- 系統日誌按鈕 -->
+            <button @click="isSiteHistoryModalOpen = true" class="bg-slate-800 hover:bg-slate-700 text-blue-400 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-slate-700 transition-transform hover:scale-110" title="系統更新日誌">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </button>
+            <!-- 齒輪按鈕 -->
+            <button @click="isSidebarOpen = !isSidebarOpen" class="bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-blue-400/50 transition-transform hover:scale-110">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </div>
 
         <!-- 主要內容區 -->
         <div class="flex-1 transition-all duration-300" :class="{'ml-0 md:ml-80': isSidebarOpen}">
@@ -162,41 +154,33 @@
                     </div>
                 </header>
 
-                <!-- 卡片列表 -->
-                <div v-if="loadingData" class="text-center text-slate-500 py-20"><div class="loader mx-auto mb-4"></div>同步雲端資料中...</div>
+                <div v-if="loadingData" class="text-center text-slate-500 py-20"><div class="loader mx-auto mb-4"></div>資料同步中...</div>
                 
                 <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                     <div v-for="(card, index) in sortedCards" :key="card.id" class="glass-card group rounded-3xl p-8 flex flex-col h-full relative overflow-hidden">
-                        
-                        <!-- 編輯工具 -->
                         <div v-if="user" class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                             <button @click="startEdit(card)" class="action-btn bg-slate-800 text-amber-400 hover:bg-amber-500 hover:text-white"><i class="fa-solid fa-pen text-xs"></i></button>
                             <button @click="removeCard(card.id)" class="action-btn bg-slate-800 text-red-400 hover:bg-red-500 hover:text-white"><i class="fa-solid fa-trash text-xs"></i></button>
                         </div>
                         
-                        <!-- 排序 -->
                         <div v-if="user" class="absolute bottom-4 left-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                             <button v-if="index > 0" @click="moveCard(index, -1)" class="action-btn bg-slate-800 text-slate-300 hover:bg-blue-500 hover:text-white"><i class="fa-solid fa-chevron-left text-xs"></i></button>
                             <button v-if="index < sortedCards.length - 1" @click="moveCard(index, 1)" class="action-btn bg-slate-800 text-slate-300 hover:bg-blue-500 hover:text-white"><i class="fa-solid fa-chevron-right text-xs"></i></button>
                         </div>
 
-                        <!-- 卡片內容 -->
                         <div :class="`w-14 h-14 bg-${card.color}-500/10 text-${card.color}-400`" class="rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <i :class="`${card.icon} text-2xl`"></i>
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">{{ card.title }}</h3>
                         <p class="text-slate-400 leading-relaxed mb-4 text-sm">{{ card.desc }}</p>
                         
-                        <!-- 備註預覽 (僅顯示最新 2 則) -->
+                        <!-- 單項工具備註預覽 -->
                         <div v-if="card.remarks && card.remarks.length > 0" class="mb-6 space-y-2">
-                            <div v-for="(rem, rIdx) in card.remarks.slice(0, 2)" :key="rIdx" class="bg-white/5 border border-white/10 rounded-lg p-2.5 text-[11px]">
-                                <span class="text-blue-400 block font-bold mb-1"><i class="fa-regular fa-clock mr-1"></i>{{ rem.time }}</span>
+                            <div v-for="(rem, rIdx) in card.remarks.slice(0, 1)" :key="rIdx" class="bg-white/5 border border-white/10 rounded-lg p-2.5 text-[11px]">
+                                <span class="text-blue-400 block font-bold mb-1">{{ rem.time }}</span>
                                 <span class="text-slate-300">{{ rem.content }}</span>
                             </div>
-                            <!-- 查看完整紀錄按鈕 -->
-                            <button @click="openHistory(card)" class="text-[10px] text-blue-400 hover:text-blue-300 flex items-center font-bold px-1 transition-colors">
-                                <i class="fa-solid fa-list-ul mr-1.5"></i> 檢視完整改版紀錄 ({{ card.remarks.length }})
-                            </button>
+                            <button @click="openHistory(card)" class="text-[10px] text-blue-400 font-bold px-1"><i class="fa-solid fa-list-ul mr-1.5"></i> 查看完整工具紀錄</button>
                         </div>
 
                         <div class="mt-auto pt-4 relative z-10">
@@ -213,47 +197,60 @@
             </div>
         </div>
 
-        <!-- 全螢幕改版紀錄彈窗 (Modal) -->
+        <!-- 全螢幕模態框 (單個工具紀錄) -->
         <transition name="modal">
-            <div v-if="isHistoryModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
-                <!-- 背景遮罩 -->
+            <div v-if="isHistoryModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
                 <div @click="closeHistory" class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
-                
-                <!-- 內容盒 -->
-                <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
-                    <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-900/50">
-                        <div class="flex items-center">
-                            <div :class="`w-10 h-10 bg-${currentHistoryCard.color}-500/10 text-${currentHistoryCard.color}-400`" class="rounded-xl flex items-center justify-center mr-4">
-                                <i :class="`${currentHistoryCard.icon} text-lg`"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-white">{{ currentHistoryCard.title }}</h2>
-                                <p class="text-xs text-slate-400">完整改版紀錄回顧</p>
-                            </div>
-                        </div>
-                        <button @click="closeHistory" class="text-slate-400 hover:text-white transition-colors">
-                            <i class="fa-solid fa-xmark text-2xl"></i>
-                        </button>
+                <div class="relative w-full max-w-lg bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[70vh]">
+                    <div class="p-6 border-b border-slate-700 flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-white">{{ currentHistoryCard.title }} 紀錄</h2>
+                        <button @click="closeHistory" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
                     </div>
+                    <div class="p-6 overflow-y-auto custom-scrollbar space-y-4">
+                        <div v-for="rem in currentHistoryCard.remarks" class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
+                            <p class="text-blue-400 text-xs font-bold mb-1">{{ rem.time }}</p>
+                            <p class="text-slate-200 text-sm">{{ rem.content }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
 
-                    <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
-                        <div v-for="(rem, idx) in currentHistoryCard.remarks" :key="idx" class="relative pl-8 before:absolute before:left-[11px] before:top-2 before:bottom-[-20px] before:w-[2px] before:bg-slate-700 last:before:hidden">
-                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center z-10">
-                                <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                            </div>
-                            <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-2xl">
-                                <p class="text-blue-400 text-xs font-bold mb-2 tracking-wide">{{ rem.time }}</p>
-                                <p class="text-slate-200 text-sm leading-relaxed">{{ rem.content }}</p>
+        <!-- ★ 全站改版日誌模態框 ★ -->
+        <transition name="modal">
+            <div v-if="isSiteHistoryModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div @click="isSiteHistoryModalOpen = false" class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
+                <div class="relative w-full max-w-xl bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+                    <div class="p-6 border-b border-slate-800 bg-blue-600/10 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-white flex items-center">
+                                <i class="fa-solid fa-rocket text-blue-400 mr-3"></i> 系統更新日誌
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-1">追蹤整合網頁的所有優化與新功能</p>
+                        </div>
+                        <button @click="isSiteHistoryModalOpen = false" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto custom-scrollbar">
+                        <div class="space-y-6">
+                            <div v-for="log in siteLogs" :key="log.id" class="relative pl-8 before:absolute before:left-[11px] before:top-2 before:bottom-[-20px] before:w-[2px] before:bg-slate-800 last:before:hidden">
+                                <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center z-10">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                </div>
+                                <div>
+                                    <p class="text-blue-400 text-xs font-bold tracking-widest mb-2">{{ log.time }}</p>
+                                    <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-2xl text-slate-200 text-sm leading-relaxed shadow-inner">
+                                        {{ log.content }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div v-if="!currentHistoryCard.remarks || currentHistoryCard.remarks.length === 0" class="text-center py-20 text-slate-600">
-                            <i class="fa-solid fa-box-open text-4xl mb-4 block opacity-20"></i>
-                            暫無改版紀錄
+                        <div v-if="siteLogs.length === 0" class="text-center py-20 text-slate-600">
+                            <i class="fa-solid fa-terminal text-4xl mb-4 opacity-20"></i>
+                            <p>尚無系統更新紀錄</p>
                         </div>
                     </div>
-                    
-                    <div class="p-6 bg-slate-900/80 border-t border-slate-800 text-center">
-                        <button @click="closeHistory" class="px-8 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-bold transition-all">關閉視窗</button>
+                    <div class="p-4 bg-slate-900 border-t border-slate-800 text-center">
+                        <button @click="isSiteHistoryModalOpen = false" class="px-8 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-bold transition-all">關閉日誌</button>
                     </div>
                 </div>
             </div>
@@ -263,7 +260,7 @@
     <script type="module">
         import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, writeBatch } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, writeBatch, orderBy } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
         const firebaseConfig = {
@@ -283,27 +280,18 @@
         createApp({
             data() {
                 return {
-                    isSidebarOpen: false,
-                    isEditing: false,
-                    isHistoryModalOpen: false, // 彈窗開關
-                    currentHistoryCard: {},    // 彈窗顯示的卡片資料
-                    editingId: null,
-                    rawCards: [],
-                    user: null,
-                    loadingData: true,
-                    isLoading: false,
-                    isSaving: false,
+                    isSidebarOpen: false, isEditing: false, isHistoryModalOpen: false,
+                    isSiteHistoryModalOpen: false, // 系統日誌彈窗
+                    currentHistoryCard: {}, rawCards: [], siteLogs: [], // 系統日誌資料
+                    user: null, loadingData: true, isLoading: false, isSaving: false,
                     loginForm: { email: '', password: '' },
-                    newRemarkText: '',
+                    newRemarkText: '', newSiteLogContent: '', // 系統日誌輸入
                     formCard: { title: '', desc: '', link: '', icon: 'fa-solid fa-cube', color: 'blue', remarks: [] }
                 }
             },
             computed: {
                 sortedCards() {
-                    return [...this.rawCards].sort((a, b) => {
-                        if (a.order !== undefined && b.order !== undefined) return a.order - b.order;
-                        return (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0);
-                    });
+                    return [...this.rawCards].sort((a, b) => (a.order || 0) - (b.order || 0));
                 }
             },
             methods: {
@@ -311,86 +299,88 @@
                     const map = { purple: 'indigo', teal: 'emerald', rose: 'orange', orange: 'amber', blue: 'cyan' };
                     return map[color] || 'blue';
                 },
-                // 彈窗操作
-                openHistory(card) {
-                    this.currentHistoryCard = card;
-                    this.isHistoryModalOpen = true;
-                    document.body.style.overflow = 'hidden'; // 禁止底層捲動
+                getTime() {
+                    const now = new Date();
+                    return `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
                 },
-                closeHistory() {
-                    this.isHistoryModalOpen = false;
-                    document.body.style.overflow = '';
+                // 系統日誌管理
+                async addSiteLog() {
+                    if(!this.newSiteLogContent.trim()) return;
+                    await addDoc(collection(db, "site_logs"), {
+                        content: this.newSiteLogContent,
+                        time: this.getTime(),
+                        createdAt: new Date()
+                    });
+                    this.newSiteLogContent = '';
                 },
-                // 備註操作
+                async removeSiteLog(id) {
+                    if(confirm('確定刪除此系統紀錄？')) await deleteDoc(doc(db, "site_logs", id));
+                },
+                // 工具備註管理
                 addRemark() {
                     if(!this.newRemarkText.trim()) return;
                     if(!this.formCard.remarks) this.formCard.remarks = [];
-                    const now = new Date();
-                    const timeStr = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-                    this.formCard.remarks.unshift({ content: this.newRemarkText, time: timeStr });
+                    this.formCard.remarks.unshift({ content: this.newRemarkText, time: this.getTime() });
                     this.newRemarkText = '';
                 },
                 removeRemark(index) { this.formCard.remarks.splice(index, 1); },
+                openHistory(card) { this.currentHistoryCard = card; this.isHistoryModalOpen = true; },
+                closeHistory() { this.isHistoryModalOpen = false; },
 
-                // 其餘功能保持不變
+                // 其餘 Firebase 邏輯
                 async handleLogin() {
                     this.isLoading = true;
                     try { await signInWithEmailAndPassword(auth, this.loginForm.email, this.loginForm.password); } catch (e) { alert("登入失敗"); } finally { this.isLoading = false; }
                 },
                 handleLogout() { signOut(auth); this.isSidebarOpen = false; },
                 async addCard() {
-                    if(!this.formCard.title || !this.formCard.link) return alert('請填寫必填欄位');
                     this.isSaving = true;
-                    try {
-                        const maxOrder = this.rawCards.reduce((max, c) => Math.max(max, c.order || 0), 0);
-                        await addDoc(collection(db, "tools"), { ...this.formCard, order: maxOrder + 1, createdAt: new Date() });
-                        this.resetForm(); alert('新增成功');
-                    } catch (e) { alert("失敗"); } finally { this.isSaving = false; }
+                    const maxOrder = this.rawCards.reduce((max, c) => Math.max(max, c.order || 0), 0);
+                    await addDoc(collection(db, "tools"), { ...this.formCard, order: maxOrder + 1, createdAt: new Date() });
+                    this.resetForm(); this.isSaving = false;
                 },
                 startEdit(card) {
-                    this.isSidebarOpen = true; this.isEditing = true; this.editingId = card.id;
+                    this.isSidebarOpen = true; this.isEditing = true;
                     this.formCard = JSON.parse(JSON.stringify(card));
-                    if(!this.formCard.remarks) this.formCard.remarks = [];
+                    this.editingId = card.id;
                     delete this.formCard.id; delete this.formCard.order; delete this.formCard.createdAt;
                 },
                 async updateCard() {
-                    this.isSaving = true;
-                    try {
-                        await updateDoc(doc(db, "tools", this.editingId), this.formCard);
-                        alert("更新成功"); this.cancelEdit();
-                    } catch(e) { alert("更新失敗"); } finally { this.isSaving = false; }
+                    await updateDoc(doc(db, "tools", this.editingId), this.formCard);
+                    this.cancelEdit();
                 },
-                cancelEdit() { this.isEditing = false; this.editingId = null; this.resetForm(); },
-                async removeCard(id) { if(confirm('確定刪除？')) await deleteDoc(doc(db, "tools", id)); },
+                cancelEdit() { this.isEditing = false; this.resetForm(); },
+                async removeCard(id) { if(confirm('刪除工具？')) await deleteDoc(doc(db, "tools", id)); },
                 async moveCard(index, direction) {
                     const sorted = this.sortedCards;
                     const targetIdx = index + direction;
                     const batch = writeBatch(db);
-                    batch.update(doc(db, "tools", sorted[index].id), { order: sorted[targetIdx].order || targetIdx });
-                    batch.update(doc(db, "tools", sorted[targetIdx].id), { order: sorted[index].order || index });
+                    batch.update(doc(db, "tools", sorted[index].id), { order: targetIdx });
+                    batch.update(doc(db, "tools", sorted[targetIdx].id), { order: index });
                     await batch.commit();
                 },
+                resetForm() { this.formCard = { title: '', desc: '', link: '', icon: 'fa-solid fa-cube', color: 'blue', remarks: [] }; },
+                closeSidebar() { this.isSidebarOpen = false; this.cancelEdit(); },
                 exportData() {
-                    const dataStr = JSON.stringify(this.rawCards.map(({id, ...r})=>r), null, 2);
-                    const blob = new Blob([dataStr], {type: "application/json"});
+                    const data = { tools: this.rawCards, logs: this.siteLogs };
+                    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
                     a.download = `backup_${new Date().toISOString().slice(0,10)}.json`;
                     a.click();
-                },
-                async fixDataOrder() {
-                    const batch = writeBatch(db);
-                    this.sortedCards.forEach((c, i) => batch.update(doc(db, "tools", c.id), { order: i }));
-                    await batch.commit(); alert("修復完成");
-                },
-                resetForm() { this.formCard = { title: '', desc: '', link: '', icon: 'fa-solid fa-cube', color: 'blue', remarks: [] }; this.newRemarkText = ''; },
-                closeSidebar() { this.isSidebarOpen = false; this.cancelEdit(); }
+                }
             },
             mounted() {
                 onAuthStateChanged(auth, (u) => { this.user = u; });
+                // 工具資料監聽
                 onSnapshot(collection(db, "tools"), (snap) => {
                     this.rawCards = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     this.loadingData = false;
+                });
+                // 系統日誌監聽 (依照時間倒序)
+                const logsQuery = query(collection(db, "site_logs"), orderBy("createdAt", "desc"));
+                onSnapshot(logsQuery, (snap) => {
+                    this.siteLogs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 });
             }
         }).mount('#app');
