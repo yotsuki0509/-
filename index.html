@@ -43,12 +43,10 @@
                         <span v-if="user">{{ isEditing ? '編輯模式' : '管理後台' }}</span>
                         <span v-else>管理員登入</span>
                     </h2>
-                    <button @click="closeSidebar" class="text-slate-400 hover:text-white">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
+                    <button @click="closeSidebar" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
                 </div>
 
-                <!-- 1. 未登入狀態 -->
+                <!-- 未登入狀態 -->
                 <div v-if="!user" class="space-y-4">
                     <input v-model="loginForm.email" type="email" placeholder="Email" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none">
                     <input v-model="loginForm.password" type="password" placeholder="Password" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none">
@@ -57,91 +55,91 @@
                     </button>
                 </div>
 
-                <!-- 2. 已登入狀態 -->
+                <!-- 已登入狀態 -->
                 <div v-else class="space-y-4 flex-1">
                     <div class="bg-blue-900/20 p-3 rounded-lg border border-blue-500/20 mb-4 flex justify-between items-center text-xs">
                         <p class="text-blue-200 truncate max-w-[150px]">{{ user.email }}</p>
                         <button @click="handleLogout" class="text-blue-300 underline">登出</button>
                     </div>
 
-                    <!-- 工具表單 -->
+                    <!-- 工具基本資訊 -->
                     <div class="space-y-3">
-                        <label class="text-xs text-slate-500 uppercase font-bold">工具內容</label>
-                        <input v-model="formCard.title" type="text" placeholder="工具標題" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none">
-                        <textarea v-model="formCard.desc" rows="2" placeholder="描述內容" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none"></textarea>
+                        <label class="text-xs text-slate-500 uppercase font-bold">工具基本資料</label>
+                        <input v-model="formCard.title" type="text" placeholder="工具名稱" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none">
+                        <textarea v-model="formCard.desc" rows="2" placeholder="功能描述" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none"></textarea>
+                        
+                        <!-- ★ 單個工具的改版紀錄編輯 ★ -->
+                        <div v-if="isEditing" class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <label class="text-[10px] text-amber-500 font-bold uppercase block mb-2">單項改版備忘錄</label>
+                            <div class="flex gap-2 mb-2">
+                                <input v-model="newRemarkText" type="text" placeholder="輸入紀錄..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white outline-none">
+                                <button @click="addRemark" class="bg-amber-600 px-2 rounded-lg text-xs text-white">新增</button>
+                            </div>
+                            <div class="max-h-24 overflow-y-auto custom-scrollbar space-y-1">
+                                <div v-for="(rem, rIdx) in formCard.remarks" :key="rIdx" class="text-[10px] bg-slate-900 p-1.5 rounded flex justify-between items-start">
+                                    <span class="text-slate-300 pr-2">{{ rem.content }}</span>
+                                    <button @click="removeRemark(rIdx)" class="text-slate-500 hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
                         <input v-model="formCard.link" type="text" placeholder="連結 URL" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none">
                         <div class="grid grid-cols-2 gap-3">
-                            <input v-model="formCard.icon" type="text" placeholder="圖示(FA)" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none">
+                            <input v-model="formCard.icon" type="text" placeholder="FA 圖示" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none">
                             <select v-model="formCard.color" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none">
                                 <option value="purple">紫</option><option value="teal">青</option><option value="rose">紅</option><option value="orange">橘</option><option value="blue">藍</option>
                             </select>
                         </div>
                     </div>
 
-                    <button v-if="isEditing" @click="updateCard" class="w-full bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-lg mt-2 transition-all hover:bg-amber-500">更新卡片</button>
-                    <button v-else @click="addCard" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl shadow-lg mt-2 transition-all hover:bg-emerald-500">新增卡片</button>
+                    <button v-if="isEditing" @click="updateCard" class="w-full bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-lg transition-all hover:bg-amber-500">更新卡片</button>
+                    <button v-else @click="addCard" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl shadow-lg transition-all hover:bg-emerald-500">新增卡片</button>
 
-                    <!-- ★ 系統日誌管理 (精簡版) ★ -->
+                    <!-- 系統日誌管理 -->
                     <div class="mt-8 pt-6 border-t border-slate-700 space-y-3">
                         <label class="text-xs text-blue-400 uppercase font-bold flex items-center">
-                            <i class="fa-solid fa-bullhorn mr-2"></i> 系統日誌管理
+                            <i class="fa-solid fa-bullhorn mr-2"></i> 全站日誌管理
                         </label>
                         <div class="flex gap-2">
-                            <input v-model="newSiteLogContent" type="text" placeholder="輸入系統更新紀錄..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-blue-500">
+                            <input v-model="newSiteLogContent" type="text" placeholder="更新紀錄..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none">
                             <button @click="addSiteLog" class="bg-blue-600 text-white px-3 rounded-lg text-xs"><i class="fa-solid fa-plus"></i></button>
                         </div>
-                        <!-- 僅顯示最新 2 條 -->
                         <div class="space-y-2">
                             <div v-for="log in siteLogs.slice(0, 2)" :key="log.id" class="bg-slate-800/40 p-2 rounded border border-slate-700 group relative">
                                 <p class="text-[9px] text-blue-400 font-bold">{{ log.time }}</p>
                                 <p class="text-[11px] text-slate-300 pr-4 truncate">{{ log.content }}</p>
-                                <button @click="removeSiteLog(log.id)" class="absolute top-2 right-2 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash text-[9px]"></i></button>
+                                <button @click="removeSiteLog(log.id)" class="absolute top-2 right-2 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><i class="fa-solid fa-trash text-[9px]"></i></button>
                             </div>
-                            <button v-if="siteLogs.length > 2" @click="isSiteHistoryModalOpen = true" class="w-full text-[10px] text-slate-500 hover:text-blue-400 transition-colors py-1 text-center font-bold">
-                                查看其餘 {{ siteLogs.length - 2 }} 則紀錄...
-                            </button>
+                            <button v-if="siteLogs.length > 2" @click="isSiteHistoryModalOpen = true" class="w-full text-[10px] text-slate-500 hover:text-blue-400 py-1 text-center font-bold">查看其餘 {{ siteLogs.length - 2 }} 則...</button>
                         </div>
                     </div>
 
                     <!-- 資料維護 -->
                     <div class="mt-8 pt-6 border-t border-slate-700 space-y-2">
-                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-2">資料維護</p>
                         <div class="grid grid-cols-2 gap-2">
-                            <button @click="exportData" class="w-full border border-slate-600 text-slate-300 py-2 rounded-lg text-[11px] flex items-center justify-center hover:bg-slate-800">
-                                <i class="fa-solid fa-file-export mr-2"></i> 匯出 (JSON)
-                            </button>
-                            <button @click="$refs.fileInput.click()" class="w-full border border-blue-600/50 text-blue-300 py-2 rounded-lg text-[11px] flex items-center justify-center hover:bg-blue-900/20">
-                                <i class="fa-solid fa-file-import mr-2"></i> 匯入 (JSON)
-                            </button>
+                            <button @click="exportData" class="border border-slate-600 text-slate-300 py-2 rounded-lg text-[11px] hover:bg-slate-800"><i class="fa-solid fa-file-export mr-2"></i>匯出</button>
+                            <button @click="$refs.fileInput.click()" class="border border-blue-600/50 text-blue-300 py-2 rounded-lg text-[11px] hover:bg-blue-900/20"><i class="fa-solid fa-file-import mr-2"></i>匯入</button>
                             <input type="file" ref="fileInput" class="hidden" accept=".json" @change="importData">
                         </div>
+                        <button @click="fixDataOrder" class="w-full bg-slate-800 text-slate-400 py-2 rounded-lg text-[10px] border border-dashed border-slate-600 mt-2">重建排序索引</button>
                     </div>
                 </div>
             </div>
         </transition>
 
-        <!-- 左下角按鈕組 -->
+        <!-- 懸浮按鈕組 -->
         <div class="fixed left-6 bottom-6 z-40 flex flex-col gap-3">
-            <button @click="isSiteHistoryModalOpen = true" class="bg-slate-800 hover:bg-slate-700 text-blue-400 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-slate-700 transition-transform hover:scale-110">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-            </button>
-            <button @click="isSidebarOpen = !isSidebarOpen" class="bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-blue-400/50 transition-transform hover:scale-110">
-                <i class="fa-solid fa-gear"></i>
-            </button>
+            <button @click="isSiteHistoryModalOpen = true" class="bg-slate-800 hover:bg-slate-700 text-blue-400 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-slate-700 transition-transform hover:scale-110"><i class="fa-solid fa-clock-rotate-left"></i></button>
+            <button @click="isSidebarOpen = !isSidebarOpen" class="bg-blue-600 hover:bg-blue-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-blue-400/50 transition-transform hover:scale-110"><i class="fa-solid fa-gear"></i></button>
         </div>
 
         <!-- 主要內容區 -->
         <div class="flex-1 transition-all duration-300" :class="{'ml-0 md:ml-80': isSidebarOpen}">
-            <div class="container mx-auto px-6 py-20 relative">
+            <div class="container mx-auto px-6 py-20">
                 <header class="text-center mb-20">
                     <h1 class="text-5xl md:text-6xl font-extrabold text-gradient mb-6 tracking-tight">小工具整合網址</h1>
-                    <div class="flex justify-center">
-                        <div class="px-6 py-2 bg-slate-800/50 backdrop-blur-sm rounded-full border border-slate-700/50">
-                            <p class="text-slate-300 text-sm font-medium flex items-center">
-                                <span class="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
-                                整合數據分析工具，提升工作效率
-                            </p>
-                        </div>
+                    <div class="px-6 py-2 bg-slate-800/50 backdrop-blur-sm rounded-full border border-slate-700/50 inline-block">
+                        <p class="text-slate-300 text-sm font-medium flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>整合數據分析工具，提升工作效率</p>
                     </div>
                 </header>
 
@@ -165,21 +163,19 @@
                         <h3 class="text-xl font-bold text-white mb-3">{{ card.title }}</h3>
                         <p class="text-slate-400 leading-relaxed mb-4 text-sm">{{ card.desc }}</p>
                         
-                        <!-- 單個工具紀錄預覽 -->
+                        <!-- ★ 單個工具紀錄預覽 (只顯最新1條) ★ -->
                         <div v-if="card.remarks && card.remarks.length > 0" class="mb-6 space-y-2">
                             <div v-for="(rem, rIdx) in card.remarks.slice(0, 1)" :key="rIdx" class="bg-white/5 border border-white/10 rounded-lg p-2.5 text-[11px]">
-                                <span class="text-blue-400 block font-bold mb-1">{{ rem.time }}</span>
+                                <span class="text-blue-400 block font-bold mb-1"><i class="fa-regular fa-clock mr-1"></i>{{ rem.time }}</span>
                                 <span class="text-slate-300 line-clamp-2">{{ rem.content }}</span>
                             </div>
-                            <button @click="openHistory(card)" class="text-[10px] text-blue-400 hover:text-blue-300 font-bold flex items-center transition-colors">
+                            <button @click="openHistory(card)" class="text-[10px] text-blue-400 font-bold px-1 flex items-center transition-colors">
                                 <i class="fa-solid fa-list-ul mr-1.5"></i> 查看完整紀錄 ({{ card.remarks.length }})
                             </button>
                         </div>
 
                         <div class="mt-auto pt-4 relative z-10">
-                            <a :href="card.link" target="_blank" :class="`from-${card.color}-600 to-${getGradientEnd(card.color)}-600`" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-gradient-to-r rounded-xl hover:opacity-90 transition-all shadow-lg">
-                                前往工具 <i class="fa-solid fa-chevron-right ml-2 text-xs"></i>
-                            </a>
+                            <a :href="card.link" target="_blank" :class="`from-${card.color}-600 to-${getGradientEnd(card.color)}-600`" class="flex items-center justify-center w-full px-5 py-3.5 font-bold text-white bg-gradient-to-r rounded-xl hover:opacity-90 transition-all shadow-lg">前往工具 <i class="fa-solid fa-chevron-right ml-2 text-xs"></i></a>
                         </div>
                     </div>
                 </div>
@@ -191,21 +187,18 @@
             <div v-if="isSiteHistoryModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
                 <div @click="isSiteHistoryModalOpen = false" class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
                 <div class="relative w-full max-w-xl bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl flex flex-col max-h-[80vh]">
-                    <div class="p-6 border-b border-slate-800 bg-blue-600/10 flex justify-between items-center">
-                        <h2 class="text-xl font-bold text-white flex items-center"><i class="fa-solid fa-rocket text-blue-400 mr-3"></i> 系統更新日誌</h2>
-                        <button @click="isSiteHistoryModalOpen = false" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                    <div class="p-6 border-b border-slate-800 bg-blue-600/10 flex justify-between items-center text-white">
+                        <h2 class="text-xl font-bold flex items-center"><i class="fa-solid fa-rocket text-blue-400 mr-3"></i> 系統更新日誌</h2>
+                        <button @click="isSiteHistoryModalOpen = false"><i class="fa-solid fa-xmark text-2xl text-slate-400"></i></button>
                     </div>
                     <div class="p-6 overflow-y-auto custom-scrollbar space-y-6">
                         <div v-for="log in siteLogs" :key="log.id" class="relative pl-8 before:absolute before:left-[11px] before:top-2 before:bottom-[-20px] before:w-[2px] before:bg-slate-800 last:before:hidden">
                             <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center z-10"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div></div>
                             <div>
-                                <p class="text-blue-400 text-[10px] font-bold mb-1">{{ log.time }}</p>
-                                <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-2xl text-slate-200 text-sm leading-relaxed">{{ log.content }}</div>
+                                <p class="text-blue-400 text-[10px] font-bold mb-1 tracking-widest">{{ log.time }}</p>
+                                <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-2xl text-slate-200 text-sm leading-relaxed shadow-inner">{{ log.content }}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="p-4 bg-slate-900 border-t border-slate-800 text-center">
-                        <button @click="isSiteHistoryModalOpen = false" class="px-8 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold transition-all">關閉日誌</button>
                     </div>
                 </div>
             </div>
@@ -216,9 +209,9 @@
             <div v-if="isHistoryModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
                 <div @click="closeHistory" class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
                 <div class="relative w-full max-w-lg bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl flex flex-col max-h-[70vh]">
-                    <div class="p-6 border-b border-slate-700 flex justify-between items-center">
-                        <h2 class="text-xl font-bold text-white">{{ currentHistoryCard.title }} 紀錄</h2>
-                        <button @click="closeHistory" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                    <div class="p-6 border-b border-slate-700 flex justify-between items-center text-white">
+                        <h2 class="text-xl font-bold">{{ currentHistoryCard.title }} 紀錄</h2>
+                        <button @click="closeHistory"><i class="fa-solid fa-xmark text-2xl text-slate-400"></i></button>
                     </div>
                     <div class="p-6 overflow-y-auto custom-scrollbar space-y-4">
                         <div v-for="rem in currentHistoryCard.remarks" class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
@@ -234,7 +227,7 @@
     <script type="module">
         import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, writeBatch, orderBy, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, writeBatch, orderBy } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
         const firebaseConfig = {
@@ -256,7 +249,7 @@
                 return {
                     isSidebarOpen: false, isEditing: false, isHistoryModalOpen: false, isSiteHistoryModalOpen: false,
                     currentHistoryCard: {}, rawCards: [], siteLogs: [], user: null, loadingData: true, isLoading: false, isSaving: false,
-                    loginForm: { email: '', password: '' }, newSiteLogContent: '',
+                    loginForm: { email: '', password: '' }, newSiteLogContent: '', newRemarkText: '', editingId: null,
                     formCard: { title: '', desc: '', link: '', icon: 'fa-solid fa-cube', color: 'blue', remarks: [] }
                 }
             },
@@ -272,76 +265,66 @@
                     const now = new Date();
                     return `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
                 },
-                // 系統日誌
-                async addSiteLog() {
+                addSiteLog() {
                     if(!this.newSiteLogContent.trim()) return;
-                    await addDoc(collection(db, "site_logs"), { content: this.newSiteLogContent, time: this.getTime(), createdAt: new Date() });
+                    addDoc(collection(db, "site_logs"), { content: this.newSiteLogContent, time: this.getTime(), createdAt: new Date() });
                     this.newSiteLogContent = '';
                 },
-                async removeSiteLog(id) { if(confirm('確定刪除此日誌？')) await deleteDoc(doc(db, "site_logs", id)); },
-                // 匯入匯出
+                removeSiteLog(id) { if(confirm('刪除日誌？')) deleteDoc(doc(db, "site_logs", id)); },
+                // 工具備忘錄
+                addRemark() {
+                    if(!this.newRemarkText.trim()) return;
+                    if(!this.formCard.remarks) this.formCard.remarks = [];
+                    this.formCard.remarks.unshift({ content: this.newRemarkText, time: this.getTime() });
+                    this.newRemarkText = '';
+                },
+                removeRemark(index) { this.formCard.remarks.splice(index, 1); },
+                
                 exportData() {
                     const data = { tools: this.rawCards, site_logs: this.siteLogs };
                     const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(blob);
-                    a.download = `toolbox_backup_${new Date().toISOString().slice(0,10)}.json`;
+                    a.download = `backup_${new Date().toISOString().slice(0,10)}.json`;
                     a.click();
                 },
-                async importData(event) {
+                importData(event) {
                     const file = event.target.files[0];
                     if (!file) return;
                     const reader = new FileReader();
                     reader.onload = async (e) => {
                         try {
                             const data = JSON.parse(e.target.result);
-                            if(!confirm("匯入將會新增資料到資料庫中，確定繼續？")) return;
                             const batch = writeBatch(db);
-                            // 匯入卡片
-                            if (data.tools) {
-                                data.tools.forEach(item => {
-                                    const { id, ...cleanData } = item;
-                                    const newRef = doc(collection(db, "tools"));
-                                    batch.set(newRef, { ...cleanData, createdAt: new Date() });
-                                });
-                            }
-                            // 匯入日誌
-                            if (data.site_logs) {
-                                data.site_logs.forEach(item => {
-                                    const { id, ...cleanData } = item;
-                                    const newRef = doc(collection(db, "site_logs"));
-                                    batch.set(newRef, { ...cleanData, createdAt: new Date() });
-                                });
-                            }
-                            await batch.commit();
-                            alert("資料匯入成功！");
-                        } catch (err) { alert("匯入失敗：格式不正確"); }
+                            if (data.tools) data.tools.forEach(i => batch.set(doc(collection(db, "tools")), { ...i, id: undefined, createdAt: new Date() }));
+                            if (data.site_logs) data.site_logs.forEach(i => batch.set(doc(collection(db, "site_logs")), { ...i, id: undefined, createdAt: new Date() }));
+                            await batch.commit(); alert("匯入完成");
+                        } catch (err) { alert("格式錯誤"); }
                     };
                     reader.readAsText(file);
                 },
-                // 工具管理
                 async handleLogin() {
                     this.isLoading = true;
                     try { await signInWithEmailAndPassword(auth, this.loginForm.email, this.loginForm.password); } catch (e) { alert("登入失敗"); } finally { this.isLoading = false; }
                 },
                 handleLogout() { signOut(auth); this.isSidebarOpen = false; },
                 async addCard() {
-                    this.isSaving = true;
                     const maxOrder = this.rawCards.reduce((max, c) => Math.max(max, c.order || 0), 0);
                     await addDoc(collection(db, "tools"), { ...this.formCard, order: maxOrder + 1, createdAt: new Date() });
-                    this.resetForm(); this.isSaving = false;
+                    this.resetForm();
                 },
                 startEdit(card) {
                     this.isSidebarOpen = true; this.isEditing = true; this.editingId = card.id;
                     this.formCard = JSON.parse(JSON.stringify(card));
+                    if(!this.formCard.remarks) this.formCard.remarks = [];
                     delete this.formCard.id; delete this.formCard.order; delete this.formCard.createdAt;
                 },
                 async updateCard() {
                     await updateDoc(doc(db, "tools", this.editingId), this.formCard);
                     this.cancelEdit();
                 },
-                cancelEdit() { this.isEditing = false; this.resetForm(); },
-                async removeCard(id) { if(confirm('確定刪除？')) await deleteDoc(doc(db, "tools", id)); },
+                cancelEdit() { this.isEditing = false; this.editingId = null; this.resetForm(); },
+                removeCard(id) { if(confirm('確定刪除？')) deleteDoc(doc(db, "tools", id)); },
                 async moveCard(index, direction) {
                     const sorted = this.sortedCards;
                     const targetIdx = index + direction;
@@ -350,9 +333,14 @@
                     batch.update(doc(db, "tools", sorted[targetIdx].id), { order: index });
                     await batch.commit();
                 },
+                async fixDataOrder() {
+                    const batch = writeBatch(db);
+                    this.sortedCards.forEach((c, i) => batch.update(doc(db, "tools", c.id), { order: i }));
+                    await batch.commit(); alert("修復完成");
+                },
                 openHistory(card) { this.currentHistoryCard = card; this.isHistoryModalOpen = true; },
                 closeHistory() { this.isHistoryModalOpen = false; },
-                resetForm() { this.formCard = { title: '', desc: '', link: '', icon: 'fa-solid fa-cube', color: 'blue', remarks: [] }; },
+                resetForm() { this.formCard = { title: '', desc: '', link: '', icon: 'fa-solid fa-cube', color: 'blue', remarks: [] }; this.newRemarkText = ''; },
                 closeSidebar() { this.isSidebarOpen = false; this.cancelEdit(); }
             },
             mounted() {
@@ -361,8 +349,9 @@
                     this.rawCards = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     this.loadingData = false;
                 });
-                const logsQuery = query(collection(db, "site_logs"), orderBy("createdAt", "desc"));
-                onSnapshot(logsQuery, (snap) => { this.siteLogs = snap.docs.map(d => ({ id: d.id, ...d.data() })); });
+                onSnapshot(query(collection(db, "site_logs"), orderBy("createdAt", "desc")), (snap) => {
+                    this.siteLogs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                });
             }
         }).mount('#app');
     </script>
