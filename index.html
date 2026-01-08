@@ -163,15 +163,10 @@
                         <h3 class="text-xl font-bold text-white mb-3">{{ card.title }}</h3>
                         <p class="text-slate-400 leading-relaxed mb-4 text-sm">{{ card.desc }}</p>
                         
-                        <!-- ★ 單個工具紀錄預覽 (顯示最新2條) ★ -->
-                        <div v-if="card.remarks && card.remarks.length > 0" class="mb-6 space-y-2">
-                            <!-- 修改處：使用 getSortedRemarks 並顯示 2 條 -->
-                            <div v-for="(rem, rIdx) in getSortedRemarks(card).slice(0, 2)" :key="rIdx" class="bg-white/5 border border-white/10 rounded-lg p-2.5 text-[11px]">
-                                <span class="text-blue-400 block font-bold mb-1"><i class="fa-regular fa-clock mr-1"></i>{{ rem.time }}</span>
-                                <span class="text-slate-300 line-clamp-2">{{ rem.content }}</span>
-                            </div>
-                            <button @click="openHistory(card)" class="text-[10px] text-blue-400 font-bold px-1 flex items-center transition-colors">
-                                <i class="fa-solid fa-list-ul mr-1.5"></i> 查看完整紀錄 ({{ card.remarks.length }})
+                        <!-- ★ 單個工具紀錄預覽 (只顯示按鈕，避免拉長) ★ -->
+                        <div v-if="card.remarks && card.remarks.length > 0" class="mb-6">
+                            <button @click="openHistory(card)" class="w-full bg-slate-800/50 hover:bg-slate-700 border border-slate-700/50 rounded-lg py-2 text-xs text-blue-400 font-bold flex items-center justify-center transition-all group-hover:border-blue-500/30">
+                                <i class="fa-solid fa-list-ul mr-2"></i> 檢視變動紀錄 ({{ card.remarks.length }})
                             </button>
                         </div>
 
@@ -215,7 +210,6 @@
                         <button @click="closeHistory"><i class="fa-solid fa-xmark text-2xl text-slate-400"></i></button>
                     </div>
                     <div class="p-6 overflow-y-auto custom-scrollbar space-y-4">
-                        <!-- 修改處：使用 getSortedRemarks -->
                         <div v-for="rem in getSortedRemarks(currentHistoryCard)" class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
                             <p class="text-blue-400 text-[10px] font-bold mb-1">{{ rem.time }}</p>
                             <p class="text-slate-200 text-sm">{{ rem.content }}</p>
@@ -263,7 +257,6 @@
                     const map = { purple: 'indigo', teal: 'emerald', rose: 'orange', orange: 'amber', blue: 'cyan' };
                     return map[color] || 'blue';
                 },
-                // 修改處：新增排序與補零
                 getTime() {
                     const now = new Date();
                     const y = now.getFullYear();
@@ -273,7 +266,6 @@
                     const min = now.getMinutes().toString().padStart(2, '0');
                     return `${y}/${m}/${d} ${h}:${min}`;
                 },
-                // 修改處：新增取得排序後紀錄的方法
                 getSortedRemarks(card) {
                     if (!card || !card.remarks || !Array.isArray(card.remarks)) return [];
                     return [...card.remarks].sort((a, b) => {
@@ -290,7 +282,6 @@
                 addRemark() {
                     if(!this.newRemarkText.trim()) return;
                     if(!this.formCard.remarks) this.formCard.remarks = [];
-                    // 使用 unshift 確保新資料在編輯陣列最前方，但顯示時會由 getSortedRemarks 再次確保順序
                     this.formCard.remarks.unshift({ content: this.newRemarkText, time: this.getTime() });
                     this.newRemarkText = '';
                 },
